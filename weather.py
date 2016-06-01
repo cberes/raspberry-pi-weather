@@ -77,7 +77,7 @@ def calcPressure(tFine, pres, calib):
     if var1 == 0:
     	return 0
     p = 1048576 - pres
-    p = (int) ((((p << 31) - var2) * 3125) / var1)
+    p = (((p << 31) - var2) * 3125) // var1
     var1 = (calib[8] * (p >> 13) * (p >> 13)) >> 25
     var2 = (calib[7] * p) >> 19
     return ((p + var1 + var2) >> 8) + (calib[6] << 4)	
@@ -132,7 +132,7 @@ lcd = createLcd()
 try:
     while True:
         runOnce(lcd, 5)
-except KeyboardInterrupt:
+finally:
     lcd.close(clear = True)
 exit()
 
