@@ -41,14 +41,20 @@ def readBmp280(spi, reg, n):
     return adc[1:]
 
 def bmp280Data(bytes):
-    return ((bytes[2] >> 4) & 15) | (bytes[1] << 4) | (bytes[0] << 12)
+    return ((bytes[0] << 16) | (bytes[1] << 8) | bytes[2]) >> 4
 
-def readCalib(spi, reg):
+def readUnsignedShort(spi, reg):
     data = readBmp280(spi, reg, 2)
     return data[0] | (data[1] << 8)
 
+def readSignedShort(spi, reg):
+    uns = readUnsignedShort(spi, reg)
+    return uns if uns < 32768 else (uns - 65536)
+
 def tempCalibData(spi):
-    return [readCalib(spi, 0x88), readCalib(spi, 0x8A), readCalib(spi, 0x8C)]
+    return [readUnsignedShort(spi, 0x88),
+            readSignedShort(spi, 0x8A),
+            readSignedShort(spi, 0x8C)]
 
 def calcTemp(temp, calib):
     var1 = ((((temp >> 3) - (calib[0] << 1))) * calib[1]) >> 11
@@ -57,15 +63,15 @@ def calcTemp(temp, calib):
     return [tFine, (tFine * 5 + 128) >> 8]
 
 def pressureCalibData(spi):
-    return [readCalib(spi, 0x8E),
-            readCalib(spi, 0x90),
-            readCalib(spi, 0x92),
-            readCalib(spi, 0x94),
-            readCalib(spi, 0x96),
-            readCalib(spi, 0x98),
-            readCalib(spi, 0x9A),
-            readCalib(spi, 0x9C),
-            readCalib(spi, 0x9E)]
+    return [readUnsignedShort(spi, 0x8E),
+            readSignedShort(spi, 0x90),
+            readSignedShort(spi, 0x92),
+            readSignedShort(spi, 0x94),
+            readSignedShort(spi, 0x96),
+            readSignedShort(spi, 0x98),
+            readSignedShort(spi, 0x9A),
+            readSignedShort(spi, 0x9C),
+            readSignedShort(spi, 0x9E)]
 
 def calcPressure(tFine, pres, calib):
     var1 = tFine - 128000
