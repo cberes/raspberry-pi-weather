@@ -7,7 +7,7 @@ class LcdOutput:
                            pin_rw = None, numbering_mode = GPIO.BOARD,
                            cols = 16, rows = 2, dotsize = 8)
 
-    def update(self, lines):
+    def update(self, *lines):
         with cleared(self.lcd):
             for i in range(0, len(lines)):
                 self.lcd.cursor_pos = (i, 0)

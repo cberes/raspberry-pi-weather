@@ -1,0 +1,6 @@
+RPLCD==0.3.0
+RPi.GPIO==0.6.2
+numpy==1.6.2
+pifacecommon==4.1.2
+pifacedigitalio==3.0.4
+spidev==3.2
