@@ -1,22 +1,22 @@
-class CelsiusTemperature:
-    def __init__(self, celsius):
-        self.celsius = celsius
+class CelsiusTemperature(object):
+    def __init__(self, value):
+        self.__celsius = value
 
     def to_celsius(self):
-        return self.celsius
+        return self.__celsius
 
     def to_fahrenheit(self):
-        return self.celsius * 9 / 5 + 32
+        return self.__celsius * 9 / 5 + 32
 
-class FahrenheitTemperature:
-    def __init__(self, fahrenheit):
-        self.fahrenheit = fahrenheit
+class FahrenheitTemperature(object):
+    def __init__(self, value):
+        self.__fahrenheit = value
 
     def to_celsius(self):
-        return (self.fahrenheit - 32) * 5 / 9
+        return (self.__fahrenheit - 32) * 5 / 9
 
     def to_fahrenheit(self):
-        return self.fahrenheit
+        return self.__fahrenheit
 
 def celsius(value):
     return CelsiusTemperature(value)

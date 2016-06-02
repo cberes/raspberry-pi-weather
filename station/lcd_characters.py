@@ -1,9 +1,9 @@
-class LcdCharacter:
+class LcdCharacter(object):
     def __init__(self, code, bitmap):
         self.code = code
         self.bitmap = bitmap
 
-degree = LcdCharacter(0, (
+DEGREE = LcdCharacter(0, (
     0b00110,
     0b01001,
     0b01001,

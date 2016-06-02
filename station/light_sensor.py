@@ -1,4 +1,4 @@
-class LightSensor:
+class LightSensor(object):
     def __init__(self, read_channel):
         self.read_channel = read_channel
 

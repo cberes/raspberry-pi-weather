@@ -1,7 +1,6 @@
-from spi_device import SpiDevice
-from voltage import Voltage
+from station.voltage import Voltage
 
-class AdcSensor:
+class AdcSensor(object):
     def __init__(self, device, ref_voltage):
         self.device = device
         self.ref_voltage = ref_voltage

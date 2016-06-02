@@ -1,18 +1,18 @@
-class Pascals:
-    def __init__(self, pascals):
-        self.pascals = pascals
+class Pascals(object):
+    def __init__(self, value):
+        self.__pascals = value
 
     def to_pascals(self):
-        return self.pascals
+        return self.__pascals
 
     def to_kilopascals(self):
-        return self.pascals / 1000
+        return self.__pascals / 1000
 
     def to_millibars(self):
-        return self.pascals / 100
+        return self.__pascals / 100
 
     def to_inhg(self):
-        return self.pascals * 0.0002953
+        return self.__pascals * 0.0002953
 
 def pascals(value):
     return Pascals(value)

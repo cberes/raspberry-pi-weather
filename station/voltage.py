@@ -1,4 +1,4 @@
-class Voltage:
+class Voltage(object):
     def __init__(self, voltage, reference):
         self.voltage = voltage
         self.reference = reference

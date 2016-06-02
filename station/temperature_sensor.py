@@ -1,6 +1,6 @@
-from temperature import celsius
+from station.temperature import celsius
 
-class TemperatureSensor:
+class TemperatureSensor(object):
     def __init__(self, read_channel):
         self.read_channel = read_channel
 

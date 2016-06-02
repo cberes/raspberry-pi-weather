@@ -1,13 +1,13 @@
-from spidev import SpiDev
 from contextlib import contextmanager
+from spidev import SpiDev
 
-class SpiDevice:
+class SpiDevice(object):
     def __init__(self, bus, device):
         self.spi = SpiDev()
         self.spi.open(bus, device)
 
-    def transfer(self, bytes):
-        return self.spi.xfer2(bytes)
+    def transfer(self, data):
+        return self.spi.xfer2(data)
 
     def close(self):
         self.spi.close()
