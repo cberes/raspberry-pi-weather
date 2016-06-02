@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-
-import RPi.GPIO as GPIO
-from RPLCD import CharLCD, cleared
 from spidev import SpiDev
 import time
+
+from lcd_output import LcdOutput
 
 def toVolts(value):
     return (value * 3.3) / 1024
@@ -86,7 +84,7 @@ def calcPressure(tFine, pres, calib):
     p = (((p << 31) - var2) * 3125) // var1
     var1 = (calib[8] * (p >> 13) * (p >> 13)) >> 25
     var2 = (calib[7] * p) >> 19
-    return ((p + var1 + var2) >> 8) + (calib[6] << 4)	
+    return ((p + var1 + var2) >> 8) + (calib[6] << 4)
 
 def readTempAndPressure(device):
     spi = SpiDev()
@@ -100,45 +98,25 @@ def readTempAndPressure(device):
     spi.close()
     return [presCalib / 256, tempCalib / 100]
 
-def createLcd():
-    return CharLCD(pin_rs = 3, pin_e = 5, pins_data = [18, 22, 7, 13],
-                   pin_rw = None, numbering_mode = GPIO.BOARD,
-                   cols = 16, rows = 2, dotsize = 8)
-
-def updateLcd(lcd, lines):
-    with cleared(lcd):
-        for i in range(0, len(lines)):
-            lcd.cursor_pos = (i, 0)
-            lcd.write_string(lines[i])
-
 def s(value):
     return str(round(value, 2))
 
 def runOnce(lcd, delay):
     light, temp = readLightAndTemp(0)
-    updateLcd(lcd, [
-        "LI: " + s(light) + "%"
-    ])
+    lcd.update("LI: " + s(light) + "%")
     time.sleep(delay)
-    updateLcd(lcd, [
-        "TE: " + s(temp) + "*C, " + s(c2f(temp)) + "*F"
-    ])
+    lcd.update("TE: " + s(temp) + "*C, " + s(c2f(temp)) + "*F")
     time.sleep(delay)
     pressure, temp2 = readTempAndPressure(1)
-    updateLcd(lcd, [
-        "PR: " + s(pressure) + "Pa, " + s(pressure * 0.0002953) + "inHg"
-    ])
+    lcd.update("PR: " + s(pressure) + "Pa, " + s(pressure * 0.0002953) + "inHg")
     time.sleep(delay)
-    updateLcd(lcd, [
-        "TE: " + s(temp2) + "*C, " + s(c2f(temp2)) + "*F"
-    ])
+    lcd.update("TE: " + s(temp2) + "*C, " + s(c2f(temp2)) + "*F")
     time.sleep(delay)
 
-lcd = createLcd()
+lcd = LcdOutput()
 try:
     while True:
         runOnce(lcd, 5)
 finally:
-    lcd.close(clear = True)
+    lcd.close()
 exit()
-
