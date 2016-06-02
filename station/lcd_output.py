@@ -1,6 +1,6 @@
+from contextlib import contextmanager
 import RPi.GPIO as GPIO
 from RPLCD import CharLCD, cleared
-from contextlib import contextmanager
 
 class LcdOutput:
     def __init__(self):
@@ -13,6 +13,9 @@ class LcdOutput:
             for i in range(0, len(lines)):
                 self.lcd.cursor_pos = (i, 0)
                 self.lcd.write_string(lines[i])
+
+    def create(self, c):
+        self.lcd.create_char(c.code, c.bitmap)
 
     def close(self):
         self.lcd.close(clear = True)
