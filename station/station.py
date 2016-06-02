@@ -1,4 +1,5 @@
-import time
+from time import sleep
+from functools import partial
 
 from lcd_output import open_lcd
 from spi_device import open_spi
@@ -16,11 +17,11 @@ def run_once(lcd, delay):
         ls = LightSensor(partial(adc.voltage, 0))
         light = ls.read()
         lcd.update("LI: " + fmt(light.to_percent()) + "%")
-        time.sleep(delay)
+        sleep(delay)
         ts = TemperatureSensor(partial(adc.voltage, 2))
         temp = ts.read()
         lcd.update("TE: " + fmt(temp.to_celsius()) + "*C, " + fmt(temp.to_fahrenheit()) + "*F")
-        time.sleep(delay)
+        sleep(delay)
 
     with open_spi(0, 1) as spi:
         ps = PressureSensor(spi)
@@ -28,9 +29,9 @@ def run_once(lcd, delay):
         ps.read_pressure_calibration()
         pressure, temp = ps.read()
         lcd.update("PR: " + fmt(pressure.to_millibars()) + "hPa, " + fmt(pressure.to_inhg()) + "inHg")
-        time.sleep(delay)
+        sleep(delay)
         lcd.update("TE: " + fmt(temp.to_celsius()) + "*C, " + fmt(temp.to_fahrenheit()) + "*F")
-        time.sleep(delay)
+        sleep(delay)
 
 if __name__ == '__main__':
     with open_lcd() as lcd:

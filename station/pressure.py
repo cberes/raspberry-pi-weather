@@ -15,4 +15,4 @@ class Pascals:
         return self.pascals * 0.0002953
 
 def pascals(value):
-    return None
+    return Pascals(value)

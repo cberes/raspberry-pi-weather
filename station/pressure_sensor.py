@@ -33,7 +33,7 @@ class PressureSensor:
         t_fine, temperature = self.read_temperature(temperature_reading)
         pressure_reading = self.registers_to_data(registers, 0)
         pressure = self.read_pressure(t_fine, pressure_reading)
-        return (pascals(pressure / 256), calsius(temperature / 100))
+        return (pascals(pressure / 256), celsius(temperature / 100))
 
     def start(self):
         # send config and control registers
