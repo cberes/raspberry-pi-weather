@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 from RPLCD import CharLCD, cleared
+from contextlib import contextmanager
 
 class LcdOutput:
     def __init__(self):
@@ -15,3 +16,11 @@ class LcdOutput:
 
     def close(self):
         self.lcd.close(clear = True)
+
+@contextmanager
+def open_lcd():
+    lcd = LcdOutput()
+    try:
+        yield lcd
+    finally:
+        lcd.close()
