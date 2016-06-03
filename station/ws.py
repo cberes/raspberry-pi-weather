@@ -9,7 +9,7 @@ from station.gas_sensor import GasSensor
 from station.light_sensor import LightSensor
 from station.temperature_sensor import TemperatureSensor
 from station.pressure_sensor import PressureSensor
-from station.humidity_sensor import HumiditySensor
+from station.humidity_sensor import HumiditySensor, open_dht
 
 def fmt(value):
     return str(round(value, 2))
@@ -46,17 +46,15 @@ def run_once(lcd, delay):
         sleep(delay)
 
     # DHT22
-    try:
-        raise Exception("doesn't work")
-        humidity_sensor = HumiditySensor(8)
+    with open_dht():
+        humidity_sensor = HumiditySensor(14)
         humidity, temp = humidity_sensor.read()
-        lcd.update("HUM: " + fmt(humidity))
-        sleep(delay)
-        lcd.update("TMP: " + fmt(temp.to_celsius()) + chr(DEGREE.code) + "C, " +
-                   fmt(temp.to_fahrenheit()) + chr(DEGREE.code) + "F")
-        sleep(delay)
-    except Exception as e:
-        print(e)
+        if humidity is not None and temp is not None:
+            lcd.update("HUM: " + fmt(humidity) + "%")
+            sleep(delay)
+            lcd.update("TMP: " + fmt(temp.to_celsius()) + chr(DEGREE.code) + "C, " +
+                       fmt(temp.to_fahrenheit()) + chr(DEGREE.code) + "F")
+            sleep(delay)
 
 def main():
     with open_lcd() as lcd:

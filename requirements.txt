@@ -1,3 +1,4 @@
+PyDHT==0.0.6
 RPLCD==0.3.0
 RPi.GPIO==0.6.2
 numpy==1.6.2
