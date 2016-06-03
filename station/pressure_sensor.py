@@ -47,7 +47,7 @@ class PressureSensor(object):
 
     @staticmethod
     def registers_to_data(regs, offset):
-        return ((regs[0 + offset] << 16) | (regs[1 + offset] << 8) | regs[2 + offset]) >> 4
+        return ((regs[offset] << 16) | (regs[1 + offset] << 8) | regs[2 + offset]) >> 4
 
     def read_temperature(self, reading):
         cal = self.temperature_calibration
