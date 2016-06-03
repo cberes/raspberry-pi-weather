@@ -1,5 +1,5 @@
 class GasSensor(object):
-    def __init__(self):
+    def __init__(self, read_channel):
         self.read_channel = read_channel
 
     def read(self):

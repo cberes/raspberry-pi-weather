@@ -1,4 +1,3 @@
-from math import floor, log10
 from time import time
 from station.digital_io import DigitalIO
 
@@ -47,7 +46,7 @@ class HumidityReading(object):
 
     def is_valid(self):
         if not self.is_done():
-            return false
+            return False
         checksum = 0xFF & self.data
         data_bytes = self.__get_bytes()
         return (sum(data_bytes) & 0xFF) == checksum

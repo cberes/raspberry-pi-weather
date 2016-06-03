@@ -47,6 +47,7 @@ def run_once(lcd, delay):
 
     # DHT22
     try:
+        raise Exception("doesn't work")
         humidity_sensor = HumiditySensor(8)
         humidity, temp = humidity_sensor.read()
         lcd.update("HUM: " + fmt(humidity))
