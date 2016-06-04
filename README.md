@@ -7,9 +7,6 @@ A weather station powered by a Raspberry Pi. Conditions are displayed on an LCD.
 0. Light
 0. Temperature
 0. Barometric pressure
-
-### Coming soon
-
 0. Air quality
 0. Humidity
 
