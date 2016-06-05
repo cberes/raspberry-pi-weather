@@ -6,5 +6,5 @@ class SerialDisplay(object):
         self.delay = delay
 
     def update(self, *lines):
-        self.display.update(lines)
+        self.display.update(*lines)
         sleep(self.delay)
