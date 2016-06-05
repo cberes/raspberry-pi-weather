@@ -1,5 +1,4 @@
 from functools import partial
-from concurrent.futures import ThreadPoolExecutor, CancelledError
 
 from station.spi_device import open_spi
 from station.adc_sensor import AdcSensor
@@ -14,19 +13,20 @@ from station.circuits.voltage_divider import VoltageDivider
 from station.lcd.output import open_lcd
 from station.lcd.characters import DEGREE, OHM
 
+DELAY = 5
+
 def run_forever():
-    delay = 5
-    with open_lcd() as lcd, ThreadPoolExecutor(max_workers=1) as executor, open_dht():
+    with open_lcd() as lcd, open_dht():
         lcd.create(DEGREE)
         lcd.create(OHM)
-        display = SerialDisplay(lcd, delay)
+        display = SerialDisplay(lcd, DELAY)
         while True:
-            run_once(display, executor, delay)
+            run_once(display)
 
-def run_once(display, executor, delay):
+def run_once(display):
     read_mcp3008(display)
     read_bmp280(display)
-    read_dht22(display, executor, delay)
+    read_dht22(display)
 
 def format_temp(temp):
     return "TMP: " + fmt(temp.to_celsius()) + chr(DEGREE.code) + "C, " + \
@@ -58,14 +58,9 @@ def read_bmp280(display):
                        fmt(pressure.to_inhg()) + "inHg")
         display.update(format_temp(temp))
 
-def read_dht22(display, executor, delay):
-    future = executor.submit(read_humidity, 14)
-    try:
-        humidity, temp = future.result(delay)
-        print_humidity(display, humidity, temp)
-    except (CancelledError, TimeoutError):
-        future.cancel()
-        display.update("Humidity reading failed!")
+def read_dht22(display):
+    humidity, temp = read_humidity(14)
+    print_humidity(display, humidity, temp)
 
 def read_humidity(pin):
     humidity_sensor = HumiditySensor(pin)
