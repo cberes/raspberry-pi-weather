@@ -5,5 +5,5 @@ class LightSensor(GasSensor):
         super().__init__(read_channel, circuit)
 
     def read(self):
-        # apparently light resistance = 500 / Lux
-        return 500 / super().read()
+        # apparently light resistance (in KΩ) = 500 / Lux
+        return 500000 / super().read()

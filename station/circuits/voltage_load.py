@@ -4,4 +4,4 @@ class VoltageLoad(object):
         self.r_load = r_load
 
     def get_resistance(self, v_out):
-        return self.r_load * self.v_dc / v_out - self.r_load
+        return self.v_dc / v_out * self.r_load - self.r_load

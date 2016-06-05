@@ -5,5 +5,4 @@ class VoltageDivider(object):
         self.r_load2 = r_load2
 
     def get_resistance(self, v_out):
-        return self.v_dc * self.r_load2 / v_out - self.r_load1 - self.r_load2
-
+        return self.v_dc / v_out * self.r_load2 - self.r_load1 - self.r_load2

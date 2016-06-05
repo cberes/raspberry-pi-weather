@@ -16,8 +16,11 @@ from station.lcd.characters import DEGREE, OHM
 def fmt(value):
     return str(round(value, 2))
 
-def run_once(lcd, delay):
-    # MCP3008 devices
+def print_temp(temp, lcd):
+    lcd.update("TMP: " + fmt(temp.to_celsius()) + chr(DEGREE.code) + "C, " +
+               fmt(temp.to_fahrenheit()) + chr(DEGREE.code) + "F")
+
+def read_mcp3008(lcd, delay):
     with open_spi(0, 0) as spi:
         adc = AdcSensor(spi, 3.3)
         light_sensor = LightSensor(partial(adc.voltage, 0), VoltageLoad(3.3, 1000))
@@ -30,11 +33,10 @@ def run_once(lcd, delay):
         sleep(delay)
         temp_sensor = TemperatureSensor(partial(adc.voltage, 2))
         temp = temp_sensor.read()
-        lcd.update("TMP: " + fmt(temp.to_celsius()) + chr(DEGREE.code) + "C, " +
-                   fmt(temp.to_fahrenheit()) + chr(DEGREE.code) + "F")
+        print_temp(temp, lcd)
         sleep(delay)
 
-    # BMP280
+def read_bmp280(lcd, delay):
     with open_spi(0, 1) as spi:
         pres_sensor = PressureSensor(spi)
         pres_sensor.read_temperature_calibration()
@@ -43,20 +45,23 @@ def run_once(lcd, delay):
         lcd.update("PRS: " + fmt(pressure.to_millibars()) + "hPa, " +
                    fmt(pressure.to_inhg()) + "inHg")
         sleep(delay)
-        lcd.update("TMP: " + fmt(temp.to_celsius()) + chr(DEGREE.code) + "C, " +
-                   fmt(temp.to_fahrenheit()) + chr(DEGREE.code) + "F")
+        print_temp(temp, lcd)
         sleep(delay)
 
-    # DHT22
+def read_dht22(lcd, delay):
     with open_dht():
         humidity_sensor = HumiditySensor(14)
         humidity, temp = humidity_sensor.read()
         if humidity is not None and temp is not None:
             lcd.update("HUM: " + fmt(humidity) + "%")
             sleep(delay)
-            lcd.update("TMP: " + fmt(temp.to_celsius()) + chr(DEGREE.code) + "C, " +
-                       fmt(temp.to_fahrenheit()) + chr(DEGREE.code) + "F")
+            print_temp(temp, lcd)
             sleep(delay)
+
+def run_once(lcd, delay):
+    read_mcp3008(lcd, delay)
+    read_bmp280(lcd, delay)
+    read_dht22(lcd, delay)
 
 def main():
     with open_lcd() as lcd:
