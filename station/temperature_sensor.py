@@ -5,6 +5,6 @@ class TemperatureSensor(object):
         self.read_channel = read_channel
 
     def read(self):
-        voltage = self.read_channel().to_voltage()
+        voltage = self.read_channel()
         temperature = (voltage - 0.5) * 100
         return celsius(temperature)

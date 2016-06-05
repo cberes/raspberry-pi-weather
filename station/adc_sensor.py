@@ -1,5 +1,3 @@
-from station.voltage import Voltage
-
 class AdcSensor(object):
     def __init__(self, device, ref_voltage):
         self.device = device
@@ -7,8 +5,7 @@ class AdcSensor(object):
 
     def voltage(self, channel):
         value = self.read(channel)
-        voltage = (value * self.ref_voltage) / 1024
-        return Voltage(voltage, self.ref_voltage)
+        return (value * self.ref_voltage) / 1024
 
     def read(self, channel):
         data = self.device.transfer([1, (channel + 8) << 4, 0])

@@ -1,8 +1,6 @@
 from time import sleep
 from functools import partial
 
-from station.lcd_output import open_lcd
-from station.lcd_characters import DEGREE
 from station.spi_device import open_spi
 from station.adc_sensor import AdcSensor
 from station.gas_sensor import GasSensor
@@ -10,6 +8,10 @@ from station.light_sensor import LightSensor
 from station.temperature_sensor import TemperatureSensor
 from station.pressure_sensor import PressureSensor
 from station.humidity_sensor import HumiditySensor, open_dht
+from station.circuits.voltage_load import VoltageLoad
+from station.circuits.voltage_divider import VoltageDivider
+from station.lcd.output import open_lcd
+from station.lcd.characters import DEGREE, OHM
 
 def fmt(value):
     return str(round(value, 2))
@@ -18,13 +20,13 @@ def run_once(lcd, delay):
     # MCP3008 devices
     with open_spi(0, 0) as spi:
         adc = AdcSensor(spi, 3.3)
-        light_sensor = LightSensor(partial(adc.voltage, 0))
+        light_sensor = LightSensor(partial(adc.voltage, 0), VoltageLoad(3.3, 1000))
         light = light_sensor.read()
-        lcd.update("LIT: " + fmt(light.to_percent()) + "%")
+        lcd.update("LIT: " + fmt(light.to_percent()) + "lx")
         sleep(delay)
-        gas_sensor = GasSensor(partial(adc.voltage, 1))
+        gas_sensor = GasSensor(partial(adc.voltage, 1), VoltageDivider(5.0, 10000, 20000))
         air = gas_sensor.read()
-        lcd.update("AIR: " + fmt(air.to_percent()) + "%")
+        lcd.update("AIR: " + fmt(air.to_percent()) + chr(OHM.code))
         sleep(delay)
         temp_sensor = TemperatureSensor(partial(adc.voltage, 2))
         temp = temp_sensor.read()
@@ -59,6 +61,7 @@ def run_once(lcd, delay):
 def main():
     with open_lcd() as lcd:
         lcd.create(DEGREE)
+        lcd.create(OHM)
         while True:
             run_once(lcd, 5)
 
