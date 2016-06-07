@@ -1,8 +1,14 @@
-class GasSensor(object):
-    def __init__(self, read_channel, circuit):
-        self.read_channel = read_channel
+from station.measurement import Measurement
+from station.spi_sensor import SpiSensor
+
+class GasSensor(SpiSensor):
+    def __init__(self, device, circuit):
+        super().__init__(device)
         self.circuit = circuit
 
     def read(self):
-        voltage = self.read_channel()
-        return self.circuit.get_resistance(voltage)
+        voltage = self.device.voltage()
+        resistance = self.circuit.get_resistance(voltage)
+        return (
+            Measurement(name='air contaminants', abbrev='air', value=resistance, units='Ω'),
+        )
