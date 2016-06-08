@@ -11,9 +11,6 @@ class HumiditySensor(object):
         self.delay = 500
         self.temp_units = kwargs['temp_units'] if 'temp_units' in kwargs else 'celsius'
 
-    def init(self):
-        PyDHT.init()
-
     def read(self):
         reading = PyDHT.read(self.type, self.channel, self.delay)
         if reading is None:
@@ -26,5 +23,10 @@ class HumiditySensor(object):
                         units=temperature[1]),
         )
 
-    def close(self):
+    @staticmethod
+    def hw_init():
+        PyDHT.init()
+
+    @staticmethod
+    def hw_close():
         PyDHT.close()

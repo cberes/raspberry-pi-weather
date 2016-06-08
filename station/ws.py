@@ -23,9 +23,11 @@ class WeatherStation(object):
         try:
             self.__add_lcd_chars()
             self.__create_sensors()
+            HumiditySensor.hw_init()
             while True:
                 self.__run_once()
         finally:
+            HumiditySensor.hw_close()
             self.lcd.close()
 
     def __add_lcd_chars(self):
@@ -37,7 +39,7 @@ class WeatherStation(object):
             LightSensor(AdcSensor(SpiDevice(0, 0), 0, 3.3), VoltageLoad(3.3, 1000)),
             GasSensor(AdcSensor(SpiDevice(0, 0), 1, 3.3), VoltageDivider(5.0, 10000, 20000)),
             TemperatureSensor(AdcSensor(SpiDevice(0, 0), 2, 3.3), temp_units='fahrenheit'),
-            PressureSensor(SpiDevice(0, 1), pressure_units='millibars', temp_units='fahrenheit'),
+            PressureSensor(SpiDevice(0, 1), pressure_units='inhg', temp_units='fahrenheit'),
             HumiditySensor(14, temp_units='fahrenheit'),
         )
 
@@ -46,17 +48,24 @@ class WeatherStation(object):
             try:
                 self.__read_sensor(sensor)
             except SensorError:
-                self.lcd.update(type(sensor).__name__ + " failure!")
-                sleep(self.delay)
+                sensor_name = WeatherStation.__split(type(sensor).__name__)
+                self.__update_display(sensor_name + " failure!")
             finally:
                 sensor.close()
 
     def __read_sensor(self, sensor):
         sensor.init()
         for measurement in sensor.read():
-            self.lcd.update(measurement.get_abbrev().upper() + ": " + \
+            self.__update_display(measurement.get_abbrev().upper() + ": " + \
                 str(round(measurement.get_value(), 2)) + " " + measurement.get_units())
-            sleep(self.delay)
+
+    def __update_display(self, *lines):
+        self.lcd.update(*lines)
+        sleep(self.delay)
+
+    @staticmethod
+    def __split(camelcase):
+        return re.sub("([a-z])([A-Z])","\g<1> \g<2>", camelcase)
 
 if __name__ == '__main__':
     WeatherStation(LcdOutput(), 5).run_forever()
