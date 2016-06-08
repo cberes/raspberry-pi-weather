@@ -1,3 +1,4 @@
+import re
 from time import sleep
 
 from station.spi_device import SpiDevice
@@ -65,7 +66,7 @@ class WeatherStation(object):
 
     @staticmethod
     def __split(camelcase):
-        return re.sub("([a-z])([A-Z])","\g<1> \g<2>", camelcase)
+        return re.sub("([a-z])([A-Z])", "\\g<1> \\g<2>", camelcase)
 
 if __name__ == '__main__':
     WeatherStation(LcdOutput(), 5).run_forever()
