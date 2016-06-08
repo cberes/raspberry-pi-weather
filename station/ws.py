@@ -36,9 +36,9 @@ class WeatherStation(object):
         self.sensors += (
             LightSensor(AdcSensor(SpiDevice(0, 0), 0, 3.3), VoltageLoad(3.3, 1000)),
             GasSensor(AdcSensor(SpiDevice(0, 0), 1, 3.3), VoltageDivider(5.0, 10000, 20000)),
-            TemperatureSensor(AdcSensor(SpiDevice(0, 0), 2, 3.3)),
-            PressureSensor(SpiDevice(0, 1)),
-            HumiditySensor(14),
+            TemperatureSensor(AdcSensor(SpiDevice(0, 0), 2, 3.3), temp_units='fahrenheit'),
+            PressureSensor(SpiDevice(0, 1), pressure_units='millibars', temp_units='fahrenheit'),
+            HumiditySensor(14, temp_units='fahrenheit'),
         )
 
     def __run_once(self):

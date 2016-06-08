@@ -9,7 +9,7 @@ class HumiditySensor(object):
         self.channel = channel
         self.type = PyDHT.DHT22
         self.delay = 500
-        self.fahrenheit = 'fahrenheit' in kwargs and kwargs['fahrenheit']
+        self.temp_units = kwargs['temp_units'] if 'temp_units' in kwargs else 'celsius'
 
     def init(self):
         PyDHT.init()
@@ -19,12 +19,11 @@ class HumiditySensor(object):
         if reading is None:
             raise SensorError('Humidity reading failed.')
         temperature, humidity = reading
-        celsius_temp = celsius(temperature)
-        temp_in_desired_units = celsius_temp.to_fahrenheit() if self.fahrenheit else celsius_temp
+        temperature = celsius(temperature).convert_to(self.temp_units)
         return (
             Measurement(name='humidity', abbrev='hum', value=humidity, units='%'),
-            Measurement(name='temperature', abbrev='tmp', value=temp_in_desired_units.get_value(),
-                        units=temp_in_desired_units.get_units()),
+            Measurement(name='temperature', abbrev='tmp', value=temperature[0],
+                        units=temperature[1]),
         )
 
     def close(self):

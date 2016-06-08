@@ -8,7 +8,8 @@ class PressureSensor(SpiSensor):
         super().__init__(device)
         self.pressure_calibration = []
         self.temperature_calibration = []
-        self.fahrenheit = 'fahrenheit' in kwargs and kwargs['fahrenheit']
+        self.pressure_units = kwargs['pressure_units'] if 'pressure_units' in kwargs else 'pascals'
+        self.temp_units = kwargs['temp_units'] if 'temp_units' in kwargs else 'celsius'
 
     def read(self):
         self.__read_temperature_calibration()
@@ -19,14 +20,12 @@ class PressureSensor(SpiSensor):
         t_fine, temperature = self.__read_temperature(temperature_reading)
         pressure_reading = PressureSensor.registers_to_data(registers, 0)
         pressure = self.__read_pressure(t_fine, pressure_reading)
-        pascals_pres = pascals(pressure / 256)
-        celsius_temp = celsius(temperature / 100)
-        temp_in_desired_units = celsius_temp.to_fahrenheit() if self.fahrenheit else celsius_temp
+        pressure = pascals(pressure / 256).convert_to(self.pressure_units)
+        temperature = celsius(temperature / 100).convert_to(self.temp_units)
         return (
-            Measurement(name='pressure', abbrev='prs', value=pascals_pres.to_millibars(),
-                        units='hPa'),
-            Measurement(name='temperature', abbrev='tmp', value=temp_in_desired_units.get_value(),
-                        units=temp_in_desired_units.get_units()),
+            Measurement(name='pressure', abbrev='prs', value=pressure[0], units=pressure[1]),
+            Measurement(name='temperature', abbrev='tmp', value=temperature[0],
+                        units=temperature[1]),
         )
 
     def __read_temperature_calibration(self):
