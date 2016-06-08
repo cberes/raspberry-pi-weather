@@ -3,7 +3,7 @@ import PyDHT
 from station.measurement import Measurement
 from station.sensor import Sensor
 from station.sensor_error import SensorError
-from station.temperature import celsius
+from station.units.temperature import celsius
 
 class HumiditySensor(Sensor):
     def __init__(self, channel, **kwargs):
