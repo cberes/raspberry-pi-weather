@@ -1,11 +1,13 @@
 import PyDHT
 
 from station.measurement import Measurement
+from station.sensor import Sensor
 from station.sensor_error import SensorError
 from station.temperature import celsius
 
-class HumiditySensor(object):
+class HumiditySensor(Sensor):
     def __init__(self, channel, **kwargs):
+        super().__init__()
         self.channel = channel
         self.type = PyDHT.DHT22
         self.delay = 500
