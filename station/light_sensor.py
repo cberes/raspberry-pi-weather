@@ -7,7 +7,7 @@ class LightSensor(GasSensor):
 
     def read(self):
         # apparently light resistance (in KΩ) = 500 / Lux
-        resistance = super().read()
+        resistance = super().read()[0].get_value()
         lux = 0 if resistance == 0 else 500000 / resistance
         return (
             Measurement(name='light', abbrev='lit', value=lux, units='lx'),

@@ -1,7 +1,6 @@
 class SpiSensor(object):
-    def __init__(self, device, channel):
+    def __init__(self, device):
         self.device = device
-        self.channel = channel
 
     def init(self):
         self.device.init()

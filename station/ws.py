@@ -46,16 +46,17 @@ class WeatherStation(object):
             try:
                 self.__read_sensor(sensor)
             except SensorError:
-                self.lcd.update("No " + sensor.get_name() + " reading!")
+                self.lcd.update(type(sensor).__name__ + " failure!")
+                sleep(self.delay)
             finally:
                 sensor.close()
-            sleep(self.delay)
 
     def __read_sensor(self, sensor):
         sensor.init()
         for measurement in sensor.read():
             self.lcd.update(measurement.get_abbrev().upper() + ": " + \
                 str(round(measurement.get_value(), 2)) + " " + measurement.get_units())
+            sleep(self.delay)
 
 if __name__ == '__main__':
     WeatherStation(LcdOutput(), 5).run_forever()

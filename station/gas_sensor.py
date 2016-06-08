@@ -10,5 +10,5 @@ class GasSensor(SpiSensor):
         voltage = self.device.voltage()
         resistance = self.circuit.get_resistance(voltage)
         return (
-            Measurement(name='air contaminants', abbrev='air', value=resistance, units='Ω'),
+            Measurement(name='air contaminants', abbrev='air', value=resistance, units='Ω'),
         )
