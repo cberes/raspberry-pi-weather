@@ -1,7 +1,7 @@
 from station.measurement import Measurement
-from station.pressure import pascals
 from station.spi_sensor import SpiSensor
-from station.temperature import celsius
+from station.units.pressure import pascals
+from station.units.temperature import celsius
 
 class PressureSensor(SpiSensor):
     def __init__(self, device, **kwargs):
@@ -20,12 +20,13 @@ class PressureSensor(SpiSensor):
         t_fine, temperature = self.__read_temperature(temperature_reading)
         pressure_reading = PressureSensor.registers_to_data(registers, 0)
         pressure = self.__read_pressure(t_fine, pressure_reading)
-        pressure = pascals(pressure / 256).convert_to(self.pressure_units)
-        temperature = celsius(temperature / 100).convert_to(self.temp_units)
+        pressure_with_units = pascals(pressure / 256).convert_to(self.pressure_units)
+        temperature_with_units = celsius(temperature / 100).convert_to(self.temp_units)
         return (
-            Measurement(name='pressure', abbrev='prs', value=pressure[0], units=pressure[1]),
-            Measurement(name='temperature', abbrev='tmp', value=temperature[0],
-                        units=temperature[1]),
+            Measurement(name='pressure', abbrev='prs', value=pressure_with_units[0],
+                        units=pressure_with_units[1]),
+            Measurement(name='temperature', abbrev='tmp', value=temperature_with_units[0],
+                        units=temperature_with_units[1]),
         )
 
     def __read_temperature_calibration(self):

@@ -1,6 +1,6 @@
 from station.measurement import Measurement
 from station.spi_sensor import SpiSensor
-from station.temperature import celsius
+from station.units.temperature import celsius
 
 class TemperatureSensor(SpiSensor):
     def __init__(self, device, **kwargs):
